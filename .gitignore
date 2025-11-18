@@ -25,10 +25,6 @@ env/
 postgres_data/
 *.log
 
-# Data files (avoid committing large raw datasets)
-data/*.csv
-data/*.xlsx
-
 # Byte-compiled
 *.sqlite
 *.db
