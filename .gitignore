@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# macOS files
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Docker
+postgres_data/
+*.log
+
+# Data files (avoid committing large raw datasets)
+data/*.csv
+data/*.xlsx
+
+# Byte-compiled
+*.sqlite
+*.db
