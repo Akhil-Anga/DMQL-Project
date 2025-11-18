@@ -13,15 +13,15 @@ def get_engine():
         # Test connection
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        print("✅ Database connection successful.")
+        print("Database connection successful.")
         return engine
     except SQLAlchemyError as e:
-        print("❌ Failed to connect to database:", e)
+        print("Failed to connect to database:", e)
         sys.exit(1)
 
 
 def check_tables(engine):
-    print("\n🔍 Checking if required tables exist...")
+    print("\n Checking if required tables exist...")
     required_tables = {"neighborhood", "patient", "appointment"}
 
     with engine.connect() as conn:
@@ -36,9 +36,9 @@ def check_tables(engine):
 
     missing = required_tables - existing
     if missing:
-        print("❌ Missing tables:", ", ".join(missing))
+        print("Missing tables:", ", ".join(missing))
     else:
-        print("✅ All required tables exist:", ", ".join(required_tables))
+        print("All required tables exist:", ", ".join(required_tables))
 
 
 def print_row_counts(engine):
@@ -50,7 +50,7 @@ def print_row_counts(engine):
                 count = conn.execute(text(f"SELECT COUNT(*) FROM {table};")).scalar()
                 print(f"  - {table}: {count} rows")
             except SQLAlchemyError as e:
-                print(f"  - {table}: ❌ error querying table:", e)
+                print(f"  - {table}: error querying table:", e)
 
 
 def check_fk_integrity(engine):
@@ -58,7 +58,7 @@ def check_fk_integrity(engine):
     Check that every appointment has a valid patient_id.
     (Should be guaranteed by FK constraint, but nice for demo.)
     """
-    print("\n🔗 Checking FK integrity: appointments → patient...")
+    print("\n Checking FK integrity: appointments → patient...")
 
     query = """
         SELECT a.appointment_id
@@ -72,9 +72,9 @@ def check_fk_integrity(engine):
         df = pd.read_sql(text(query), conn)
 
     if df.empty:
-        print("✅ All appointments have a valid patient_id.")
+        print("All appointments have a valid patient_id.")
     else:
-        print("❌ Found appointments with invalid patient_id! Sample:")
+        print("Found appointments with invalid patient_id! Sample:")
         print(df)
 
 
@@ -83,7 +83,7 @@ def sample_analysis_query(engine):
     Example analytical query:
     - no-show rate by neighborhood (top 5)
     """
-    print("\n📈 Sample analysis: top 5 neighborhoods by no-show rate")
+    print("\n Sample analysis: top 5 neighborhoods by no-show rate")
 
     query = """
         SELECT n.name AS neighborhood,

@@ -17,10 +17,10 @@ def main():
             result = conn.execute(text("SELECT 'Connection OK' AS status;"))
             status = result.fetchone()[0]
 
-        print(f"✅ Database connection successful: {status}")
+        print(f"Database connection successful: {status}")
 
     except SQLAlchemyError as e:
-        print("❌ Database connection failed:")
+        print("Database connection failed:")
         print(e)
 
 if __name__ == "__main__":

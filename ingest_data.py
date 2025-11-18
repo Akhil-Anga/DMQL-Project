@@ -15,9 +15,9 @@ def main():
         engine = create_engine(DB_URL)
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        print("✅ Connected to PostgreSQL.")
+        print("Connected to PostgreSQL.")
     except SQLAlchemyError as e:
-        print("❌ Failed to connect to PostgreSQL:", e)
+        print("Failed to connect to PostgreSQL:", e)
         return
 
     # 2. Read raw CSV
@@ -65,7 +65,7 @@ def main():
     )
 
     with engine.begin() as conn:
-        print("🧱 Inserting neighborhoods...")
+        print("Inserting neighborhoods...")
         neighborhoods.to_sql("neighborhood", conn, if_exists="append", index=False)
 
         # get mapping name -> id from DB
@@ -88,7 +88,7 @@ def main():
     })
 
     with engine.begin() as conn:
-        print("🧱 Inserting patients...")
+        print("Inserting patients...")
         patients.to_sql("patient", conn, if_exists="append", index=False)
 
         # build mapping from external_patient_id -> internal patient_id
@@ -115,7 +115,7 @@ def main():
     appointments = appointments.drop(columns=["patient_id_raw"])
 
     with engine.begin() as conn:
-        print("🧱 Inserting appointments...")
+        print("Inserting appointments...")
         appointments.to_sql("appointment", conn, if_exists="append", index=False)
 
     print("🎉 Data ingestion completed successfully.")

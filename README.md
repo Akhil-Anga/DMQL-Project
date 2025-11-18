@@ -1,5 +1,5 @@
-🌡️ Healthcare Appointment No-Show — Phase 1 (OLTP Database)
-📌 Project Overview
+Healthcare Appointment No-Show — Phase 1
+ --> Project Overview
 
 This project builds the OLTP foundation for analyzing patient appointments and no-show behavior using the Medical Appointment No-Show Dataset.
 
@@ -14,7 +14,7 @@ This project corresponds to Phase 1 of our DMQL course project.
 
 
 ⚙️ Phase 1 — How to Run Everything
-1️⃣ Install Dependencies
+1. Install Dependencies
 
 Create/activate your virtual environment:
 
@@ -24,7 +24,7 @@ source .venv/bin/activate
 Install requirements:
 pip install -r requirements.txt
 
-2️⃣ Start PostgreSQL + pgAdmin with Docker
+2. Start PostgreSQL + pgAdmin with Docker
 
 From the project root:
 docker compose up -d
@@ -39,14 +39,14 @@ You should see:
 -> healthcare_db
 -> pgadmin_ui
 
-3️⃣ Test Database Connection
+3. Test Database Connection
 python test_connection.py
 
 Expected:
 -> Attempting to connect…
-✅ Database connection successful: Connection OK
+Database connection successful: Connection OK
 
-4️⃣ Run the Data Ingestion Pipeline
+4. Run the Data Ingestion Pipeline
 python ingest_data.py
 
 This script:
@@ -63,12 +63,12 @@ Inserts into PostgreSQL in the correct order:
 
 Expected summary:
 
-🧱 Inserting neighborhoods...
-🧱 Inserting patients...
-🧱 Inserting appointments...
-🎉 Data ingestion completed successfully.
+Inserting neighborhoods...
+Inserting patients...
+Inserting appointments...
+Data ingestion completed successfully.
 
-5️⃣ Run Full Validation Tests
+5. Run Full Validation Tests
 python test.py
 
 
@@ -85,7 +85,7 @@ patient: 62298 rows
 appointment: 110521 rows
 All appointments have a valid patient_id
 
-6️⃣ Optional — Check DB Using pgAdmin
+6. Check DB Using pgAdmin
 
 Open:
 
@@ -110,7 +110,7 @@ Use SQL to inspect tables:
 
 SELECT * FROM appointment LIMIT 10;
 
-7️⃣ Optional (Bonus) — Apply RBAC
+7. Apply RBAC
 docker exec -it healthcare_db psql -U admin -d healthcare_db -f /docker-entrypoint-initdb.d/security.sql
 
 
@@ -120,7 +120,7 @@ analyst (read-only)
 
 app_user (read-write)
 
-📐 ERD (Crow’s Foot Notation)
+-> ERD (Crow’s Foot Notation)
 
 Your ERD describes a fully normalized 3NF schema:
 
