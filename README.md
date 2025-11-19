@@ -172,32 +172,32 @@ docker exec -it healthcare_db psql -U admin -d healthcare_db -f /docker-entrypoi
 ```
 
 Created roles:
-    -> analyst — Read-Only Role
-    ```
-        1. Can connect
-        2. Can read all tables
-        3. Cannot insert/update/delete
-    ```
+##### analyst — Read-Only Role
+```
+    1. Can connect
+    2. Can read all tables
+    3. Cannot insert/update/delete
+```
 
-    To test:
-    ```
-    SET ROLE analyst;
-    SELECT * FROM patient LIMIT 5;   -- Works
-    INSERT INTO patient VALUES (...); -- Fails (read-only)
-    ```
+To test:
+```
+SET ROLE analyst;
+SELECT * FROM patient LIMIT 5;   -- Works
+INSERT INTO patient VALUES (...); -- Fails (read-only)
+```
 
-    -> app_user — Read-Write Role
-    ```
-        1. Can connect
-        2. Can SELECT, INSERT, UPDATE, DELETE
-        3. Cannot create/drop tables
-    ```
+##### app_user — Read-Write Role
+```
+    1. Can connect
+    2. Can SELECT, INSERT, UPDATE, DELETE
+    3. Cannot create/drop tables
+```
 
-    To test:
-    ```
-    SET ROLE app_user;
-    INSERT INTO neighborhood(name) VALUES ('TEST_AREA'); -- Works
-    ```
+To test:
+```
+SET ROLE app_user;
+INSERT INTO neighborhood(name) VALUES ('TEST_AREA'); -- Works
+```
 
 Both roles are fully functional and validated in pgAdmin.
 
