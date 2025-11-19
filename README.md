@@ -54,8 +54,8 @@ This project uses the **Medical Appointment No-Show Dataset** (Healthcare.csv), 
 
 This README provides complete instructions for running, testing, and verifying Phase 1.
 
-How to Run Phase 1
-1. Install Dependencies
+### How to Run Phase 1
+#### 1. Install Dependencies
 
 Create and activate a virtual environment:
 ```
@@ -67,7 +67,7 @@ Install all required packages:
 pip install -r requirements.txt
 ```
 
-2. Start PostgreSQL + pgAdmin (Docker)
+#### 2. Start PostgreSQL + pgAdmin (Docker)
 
 From the project root:
 ```
@@ -90,7 +90,7 @@ You should see:
 
 -> gadmin_ui
 
-3. Test Database Connection
+#### 3. Test Database Connection
 
 Run:
 ```
@@ -103,7 +103,7 @@ Attempting to connect...
 Database connection successful: Connection OK
 ```
 
-4. Run the Data Ingestion Pipeline
+#### 4. Run the Data Ingestion Pipeline
 ```
 python ingest_data.py
 ```
@@ -128,7 +128,7 @@ Inserting appointments...
 Data ingestion completed successfully.
 ```
 
-5. Run Full Validation Tests
+#### 5. Run Full Validation Tests
 ```
 python test.py
 ```
@@ -147,7 +147,7 @@ appointment: 110521 rows
 All appointments have a valid patient_id.
 ```
 
-6. View Database in pgAdmin
+#### 6. View Database in pgAdmin
 
 Open:
 
@@ -164,7 +164,7 @@ Run queries such as:
 SELECT * FROM appointment LIMIT 10;
 ```
 
-7. Role-Based Access Control (RBAC)
+#### 7. Role-Based Access Control (RBAC)
 
 Run the security script:
 ```
@@ -197,7 +197,7 @@ Created roles:
 
 Both roles are fully functional and validated in pgAdmin.
 
---> Entity–Relationship Diagram (ERD)
+### Entity–Relationship Diagram (ERD)
 
 The schema follows a clean Crow’s Foot notation:
 
