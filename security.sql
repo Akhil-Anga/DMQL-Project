@@ -1,35 +1,42 @@
+-- security.sql
+-- Role-Based Access Control (RBAC) for healthcare_db (8-table schema)
 
--- Role-Based Access Control (RBAC) setup for healthcare_db
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'analyst') THEN
+        CREATE ROLE analyst LOGIN PASSWORD 'analyst123';
+    END IF;
 
--- 1. Create roles
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_user') THEN
+        CREATE ROLE app_user LOGIN PASSWORD 'appuser123';
+    END IF;
+END
+$$;
 
--- Read-only analyst role
-CREATE ROLE analyst LOGIN PASSWORD 'analyst123';
-
--- Read-write application user
-CREATE ROLE app_user LOGIN PASSWORD 'appuser123';
-
--- 2. Revoke default PUBLIC access
-
+-- Restrict PUBLIC
 REVOKE ALL ON DATABASE healthcare_db FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 
--- 3. Grant privileges to analyst (read-only)
+-- Database access
+GRANT CONNECT ON DATABASE healthcare_db TO analyst, app_user;
 
-GRANT CONNECT ON DATABASE healthcare_db TO analyst;
+-- Schema access
 GRANT USAGE ON SCHEMA public TO analyst;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO analyst;
+GRANT USAGE, CREATE ON SCHEMA public TO app_user;
 
--- Ensure future tables are also readable by analyst
+-- Table privileges (existing tables)
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO analyst;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+
+-- Sequence privileges (existing sequences)
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_user;
+
+-- Default privileges for future objects
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
 GRANT SELECT ON TABLES TO analyst;
 
--- 4. Grant privileges to app_user (read/write)
-
-GRANT CONNECT ON DATABASE healthcare_db TO app_user;
-GRANT USAGE, CREATE ON SCHEMA public TO app_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
-
--- Ensure future tables stay writable by app_user
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT USAGE, SELECT ON SEQUENCES TO app_user;
