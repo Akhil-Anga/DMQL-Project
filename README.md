@@ -200,39 +200,3 @@ INSERT INTO neighborhood(name) VALUES ('TEST_AREA'); -- Works
 ```
 
 Both roles are fully functional and validated in pgAdmin.
-
-### Entity–Relationship Diagram (ERD)
-
-The schema follows a clean Crow’s Foot notation:
-
-Neighborhood  (1) ───< (N)  Patient  (1) ───< (N)  Appointment
-
-See full diagram in:
-
-ERD/erd.png
-
-3NF Justification
-1NF – Atomicity
-    -> All fields contain atomic values
-    -> No multi-valued or repeating attributes
-    -> Timestamps, booleans, integers are all atomic
-
-2NF – No Partial Dependencies
-    -> All tables have a single-column primary key
-    -> Therefore, no attribute can depend on part of a composite key
-
-3NF – No Transitive Dependencies
-    -> patient attributes depend only on patient_id
-    -> appointment attributes depend only on appointment_id
-    -> neighborhood.name depends only on neighborhood_id
-
-This removes all anomalies from the raw CSV:
-
-1. Insertion anomalies
-
-2. Deletion anomalies
-
-3. Update anomalies
-
-The final schema is clean, minimal, and fully normalized.
-
