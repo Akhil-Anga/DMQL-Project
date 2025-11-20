@@ -1,4 +1,4 @@
-# Healthcare Appointment No-Show — Phase 1 (OLTP Database Foundation)
+# Healthcare Admissions Database Schema
 
 ## DMQL Course Project – Phase 1 Submission
 
