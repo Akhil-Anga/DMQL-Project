@@ -123,6 +123,7 @@ day_of_week	Monday, etc.
 quarter	Q1–Q4
 
 ## 5. Star Schema Diagram (Text Description)
+```
                     dim_patient
                          |
                          |
@@ -139,6 +140,7 @@ quarter	Q1–Q4
                      |       |
                  dim_date  dim_date
                (admit)    (discharge)
+```
 
 
 You can recreate this diagram visually and save it as
