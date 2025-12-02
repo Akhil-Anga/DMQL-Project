@@ -160,7 +160,7 @@ def sample_analysis_query(engine):
       - Top 5 medical conditions by total billing amount,
         broken down by hospital.
     """
-    print("\n📈 Sample analysis: Top 5 conditions by total billing amount (hospital-level)")
+    print("\n📈 Sample analysis: Top 10 conditions by total billing amount (hospital-level)")
 
     query = """
         SELECT

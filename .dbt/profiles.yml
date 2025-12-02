@@ -1,0 +1,13 @@
+dbt_healthcare:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: admin
+      password: admin123
+      port: 5432
+      dbname: healthcare_db
+      schema: analytics
+      threads: 4
+      keepalives_idle: 0

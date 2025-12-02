@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: healthcare
+    database: healthcare_db
+    schema: public
+    tables:
+      - name: patient
+      - name: doctor
+      - name: hospital
+      - name: insurance_provider
+      - name: medical_condition
+      - name: medication
+      - name: admission
+      - name: test_result

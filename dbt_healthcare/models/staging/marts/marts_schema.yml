@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: dim_patient
+    description: "Patient dimension with demographic attributes."
+    columns:
+      - name: patient_key
+        tests: [not_null, unique]
+
+  - name: dim_doctor
+    description: "Doctor dimension."
+    columns:
+      - name: doctor_key
+        tests: [not_null, unique]
+
+  - name: dim_hospital
+    description: "Hospital dimension."
+    columns:
+      - name: hospital_key
+        tests: [not_null, unique]
+
+  - name: dim_insurer
+    description: "Insurance provider dimension."
+    columns:
+      - name: insurer_key
+        tests: [not_null, unique]
+
+  - name: dim_medical_condition
+    description: "Medical condition dimension."
+    columns:
+      - name: condition_key
+        tests: [not_null, unique]
+
+  - name: fact_admission
+    description: "Central fact table for admissions/visits, joined to all dimensions."
+    columns:
+      - name: admission_key
+        tests: [not_null, unique]
+      - name: patient_key
+        tests: [not_null]
+      - name: doctor_key
+        tests: [not_null]
+      - name: hospital_key
+        tests: [not_null]
+      - name: insurer_key
+        tests: [not_null]
+      - name: condition_key
+        tests: [not_null]
