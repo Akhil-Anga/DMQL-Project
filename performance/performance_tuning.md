@@ -1,4 +1,4 @@
-# Query Performance Tuning — Phase 2 (DMQL Project)
+# Query Performance Tuning
 
 ## 1. Context & Goal
 
