@@ -1,20 +1,13 @@
 ## 1. Purpose of the Star Schema
-
 The OLTP database designed in Phase 1 is fully normalized (3NF) and optimized for transactional workloads.
 For analytical workloads (OLAP), however, a denormalized star schema provides:
-
--> Faster aggregations
-
--> Simpler analytical queries
-
--> Clearer dimensional structure
-
--> Better compatibility with BI tools (Tableau, PowerBI, dbt)
-
+- Faster aggregations
+- Simpler analytical queries
+- Clearer dimensional structure
+- Better compatibility with BI tools (Tableau, PowerBI, dbt)
 This document defines the star schema used for the analytical layer of the healthcare admissions dataset.
 
 ## 2. Grain of the Fact Table
-
 Grain (very important):
 
 Each row in the fact table represents one hospital admission (one visit by one patient).
@@ -22,21 +15,16 @@ Each row in the fact table represents one hospital admission (one visit by one p
 All measures and foreign keys relate to this specific event.
 
 This grain is consistent, atomic, and supports all analytical questions such as:
-
--> total billing by month/hospital
-
--> readmissions within 30 days
-
--> length of stay trends
-
--> condition-wise patient distribution
-
--> insurance usage patterns
+- Total billing by month/hospital
+- Readmissions within 30 days
+- Length of stay trends
+- Condition-wise patient distribution
+- Insurance usage patterns
 
 ## 3. Fact Table: fact_admission
 ### 3.1 Fact Table Columns
 Column	Description
-admission_id	Surrogate key (one row per admission)
+admission_id	Surrogate key (one row per admission) (This is the primary key of the fact table)
 patient_id	FK → dim_patient
 doctor_id	FK → dim_doctor
 hospital_id	FK → dim_hospital
@@ -51,9 +39,9 @@ billing_amount	Numerical measure
 length_of_stay_days	Derived measure: discharge - admission
 
 ### 3.2 Measures
--> billing_amount (numeric)
--> length_of_stay_days (derived)
--> Additional derived metrics can be added later (e.g., readmission flag)
+- billing_amount (numeric)
+- length_of_stay_days (derived)
+- Additional derived metrics can be added later (e.g., `readmission` `flag`)
 
 ## 4. Dimension Tables
 ### 4.1 dim_patient
@@ -106,10 +94,8 @@ medication_name	Name
 Used for time-series analytics.
 
 Can be used twice:
-
--> admit_date_key
-
--> discharge_date_key
+- admit_date_key
+- discharge_date_key
 
 Common attributes:
 
@@ -141,17 +127,14 @@ quarter	Q1–Q4
                  dim_date  dim_date
                (admit)    (discharge)
 ```
-
-
-You can recreate this diagram visually and save it as
-erd/star_schema.png
+The visual diagram for this star schema is included at `ERD/star_schema.png`
 
 ## 6. Why This Schema Works for OLAP
--> Denormalized structure reduces join cost.
+- Denormalized structure reduces join cost.
 
--> Fact table grain is clear and consistent.
+- Fact table grain is clear and consistent.
 
--> Dimensions allow slicing the data by:
+- Dimensions allow slicing the data by:
 
     patient demographics
 
@@ -167,7 +150,7 @@ erd/star_schema.png
 
     date
 
--> Optimized for:
+- Optimized for:
 
     aggregations
 

@@ -50,36 +50,28 @@ WHERE oa.previous_admission_date IS NOT NULL
 ORDER BY oa.patient_id, oa.date_of_admission;
 ```
 ### Why this query is complex
-Uses a window function LAG() with PARTITION BY and ORDER BY.
-
-Processes potentially many rows in admission.
-
-Joins with patient to add human-readable names.
-
-Filters on date intervals and sorts the final result.
+- Uses a window function `LAG()` with `PARTITION BY` and `ORDER BY`.
+- Processes potentially many rows in `admission`.
+- Joins with `patient` to add human-readable names.
+- Filters on date intervals and sorts the final result.
 
 This makes it a good candidate for profiling and optimization.
 
 ## 3. Baseline Performance (Before Index)
 We first ran the query with:
-
 ```
 EXPLAIN ANALYZE
 WITH ordered_admissions AS ( ... same query ... )
 SELECT ...;
 ```
-Observed execution time before indexing:
+- Observed execution time before indexing:
 
-Execution Time: 44.088 ms
+#### Execution Time: 44.088 ms
 
 From the query plan, PostgreSQL needed to:
-
-Scan the admission table.
-
-Sort rows per patient_id by date_of_admission to support the window function.
-
-Join with patient on patient_id.
-
+- Scan the `admission` table.
+- Sort rows per `patient_id` by `date_of_admission` to support the window function.
+- Join with `patient` on `patient_id`.
 Although the runtime is already acceptable, we aimed to improve performance and reduce sorting cost, especially if the dataset grows.
 
 ## 4. Index Design & Rationale
@@ -88,8 +80,8 @@ CREATE INDEX idx_admission_patient_date
 ON admission (patient_id, date_of_admission);
 ```
 Why this index?
-The critical part of the query is:
 
+The critical part of the query is:
 ```
 LAG(a.date_of_admission) OVER (
     PARTITION BY a.patient_id
@@ -97,59 +89,46 @@ LAG(a.date_of_admission) OVER (
 )
 ```
 This means:
+- We access rows grouped by `patient_id`.
+- Within each patient, we order by `date_of_admission`.
 
-We access rows grouped by patient_id.
-
-Within each patient, we order by date_of_admission.
-
-A composite B-tree index on (patient_id, date_of_admission) aligns perfectly with this access pattern:
-
-PostgreSQL can read admissions for each patient already ordered by date.
-
-This reduces the need for explicit sorting and allows more efficient window-function processing.
-
-It also helps other queries that filter or group by patient_id and order by date_of_admission.
+A composite B-tree index on (`patient_id`, `date_of_admission`) aligns perfectly with this access pattern:
+- PostgreSQL can read admissions for each patient already ordered by date.
+- This reduces the need for explicit sorting and allows more efficient window-function processing.
+- It also helps other queries that filter or group by `patient_id` and order by `date_of_admission`.
 
 ## 5. Performance After Index
-After creating the index, we re-ran the same EXPLAIN ANALYZE query.
+After creating the index, we re-ran the same `EXPLAIN ANALYZE` query.
+- Observed execution time after indexing:
 
-Observed execution time after indexing:
-
-Execution Time: 33.802 ms
+#### Execution Time: 33.802 ms
 
 Improvement
-Absolute improvement: 44.088 ms → 33.802 ms
-
-Time saved: ≈ 10.286 ms
-
-Relative improvement: ≈ 23.3% faster
-
+- Absolute improvement: `44.088 ms → 33.802 ms`
+- Time saved: ≈ 10.286 ms
+- Relative improvement: ≈ 23.3% faster
 On a larger or more heavily-loaded system, this type of improvement becomes much more significant.
 
+All performance measurements were taken using PostgreSQL running inside Docker, using pgAdmin's Query Tool.
+**Summary**
+- Before index: 44.088 ms  
+- After index: 33.802 ms  
+- Improvement: 23.3% faster
+
 ## 6. Interpretation of Results
-The composite index on (patient_id, date_of_admission) helps because:
-
-The database engine can quickly retrieve admissions for each patient in the required order.
-
-The window function no longer needs a full sort of all rows; instead, it can leverage the index order.
-
-The join to patient on patient_id also benefits indirectly from better-structured access patterns.
-
+The composite index on (`patient_id`, `date_of_admission`) helps because:
+- The database engine can quickly retrieve admissions for each patient in the required order.
+- The window function no longer needs a full sort of all rows; instead, it can leverage the index order.
+- The join to `patient` on `patient_id` also benefits indirectly from better-structured access patterns.
 Even though the dataset size (≈55k rows) is moderate, the query still gained a ~23% performance improvement, demonstrating correct use of indexing principles.
 
 ## 7. Possible Future Optimizations
 If this system were deployed in production with much larger data volumes, we could explore:
-
-Additional indexes for other analytical queries (e.g., on condition_id, hospital_id, or insurance_id).
-
-Partitioning the admission table by year or month on date_of_admission.
-
-Materialized views for frequently-used rollups (e.g., monthly readmission rates per hospital).
+- Additional indexes for other analytical queries (e.g., on `condition_id`, `hospital_id`, or `insurance_id`).
+- Partitioning the `admission` table by year or month on `date_of_admission`.
+- Materialized views for frequently-used rollups (e.g., monthly readmission rates per hospital).
 
 For our course project, the current optimization is sufficient to demonstrate:
-
-Use of EXPLAIN ANALYZE.
-
-A justified indexing strategy.
-
-Measurable performance improvement aligned with the query’s access pattern.
+- Use of `EXPLAIN ANALYZE`.
+- A justified indexing strategy.
+- Measurable performance improvement aligned with the query’s access pattern.
