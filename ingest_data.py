@@ -4,8 +4,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
 # Database URL must match docker-compose.yml
-DB_URL = "postgresql+psycopg2://admin:admin123@localhost:5432/healthcare_db"
-
+# DB_URL = "postgresql+psycopg2://admin:admin123@localhost:5432/healthcare_db"
+DB_URL = "postgresql://postgres:Ramaseshu1%40@localhost:5432/postgres"
 # Path to the raw CSV
 RAW_CSV_PATH = "Data/healthcare_dataset.csv"
 

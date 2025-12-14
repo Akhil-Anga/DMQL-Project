@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: healthcare
-    database: healthcare_db
+    database: postgres
     schema: public
     tables:
       - name: patient
