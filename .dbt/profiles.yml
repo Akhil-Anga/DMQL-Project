@@ -4,8 +4,8 @@ dbt_healthcare:
     dev:
       type: postgres
       host: localhost
-      user: admin
-      password: admin123
+      user: postgres
+      password: Ramaseshu1@
       port: 5432
       dbname: healthcare_db
       schema: analytics

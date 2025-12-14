@@ -45,6 +45,5 @@ services:
       - DB_USER=admin
       - DB_PASSWORD=admin123
 
-
 volumes:
   postgres_data:
