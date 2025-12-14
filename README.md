@@ -105,10 +105,3 @@ docker compose up -d --build
 docker compose down -v
 ```
 
-### end-to-end
-- 1. docker compose down -v
-- 2. docker compose up -d --build
-- 3. python ingest_data.py
-- 4. conda activate dbt_env && cd dbt_healthcare && dbt run
-- 5. open app
-
