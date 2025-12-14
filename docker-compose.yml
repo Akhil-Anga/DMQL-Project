@@ -32,5 +32,19 @@ services:
     depends_on:
       - db
 
+  web-app:
+    build: ./app
+    container_name: healthcare_dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=healthcare_db
+      - DB_USER=admin
+      - DB_PASSWORD=admin123
+
+
 volumes:
   postgres_data:
