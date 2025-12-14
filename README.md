@@ -1,6 +1,6 @@
 # Healthcare Admissions Database Schema
 
-## DMQL Course Project – Phase 1 Submission
+## DMQL Course Project
 
 ## Project Overview:
 
@@ -8,195 +8,100 @@ This project builds a complete OLTP (Online Transaction Processing) database fou
 
 ## Dataset Description
 
-This project uses the **Medical Appointment No-Show Dataset** (Healthcare.csv), which contains information about patient appointments and whether the patient showed up.
+This project uses the **Healthcare Dataset** (Healthcare_dataset.csv), which contains information about patient appointments and whether the patient showed up.
 
-- Source: Kaggle — Medical Appointment No Shows
-- File used: `Data/Healthcare.csv`
-- Rows: ~110,526
-- Columns: 14
+- Source: Kaggle — Healthcare Dataset
+- File used: `Data/Healthcare_dataset.csv`
+- Rows: ~10,000
+- Columns: 15
 
-### Raw Attributes:
-- PatientId
-- AppointmentID
-- Gender
-- ScheduledDay
-- AppointmentDay
-- Age
-- Neighbourhood
-- Scholarship
-- Hipertension
-- Diabetes
-- Alcoholism
-- Handcap
-- SMS_received
-- No-show
+## This project is an end-to-end data system built in three phases:
 
-### Why this dataset works for Phase 1:
-- It is originally **denormalized** (flat CSV)
-- Contains mixed data types (strings, timestamps, integers, boolean-like fields)
-- Ideal for demonstrating **3NF decomposition** into:
-  - Neighborhood
-  - Patient
-  - Appointment
-- Suitable for OLTP modeling and ingestion pipelines
+- **Phase 1 (OLTP):** PostgreSQL OLTP schema + data ingestion
+- **Phase 2 (OLAP):** dbt staging + star schema (fact/dim views) + advanced SQL + performance tuning
+- **Phase 3 (Application Layer):** Streamlit Dashboard (Dockerized)
 
-### Phase 1 includes:
+---
 
--> Designing a normalized 3NF relational schema
+## 1) Tech Stack
 
--> Creating tables in PostgreSQL with proper constraints
+- **PostgreSQL** (Docker)
+- **pgAdmin** (Docker)
+- **Python** (data ingestion script)
+- **dbt-postgres** (transformations + analytical layer)
+- **Phase 3 App:** Streamlit
 
--> Developing a Python data ingestion pipeline (Pandas + SQLAlchemy)
+---
 
--> Running automated validation and diagnostic tests
+## 2) Repository Structure (High Level)
 
--> Setting up Role-Based Access Control (RBAC) — (Bonus Completed!)
+- `docker-compose.yml` → spins up Postgres + pgAdmin
+- `schema.sql` / `security.sql` → OLTP schema + permissions
+- `ingest_data.py` → loads dataset into OLTP tables
+- `dbt_healthcare/` → dbt project for transformations
+- `sql/advanced_queries.sql` → advanced analytical queries
+- `performance/performance_tuning.md` → performance tuning report
+- `reports/star_schema.md` + `ERD/star_schema.png` → star schema documentation/diagram
+- `app/` → Streamlit dashboard
+---
 
-This README provides complete instructions for running, testing, and verifying Phase 1.
+## 3) Prerequisites
 
-### How to Run Phase 1
-#### 1. Install Dependencies
+### Required
+- **Docker Desktop** installed and running
+- **Python 3.10+** (or Anaconda/Miniconda)
+---
 
-Create and activate a virtual environment:
-```
-python3 -m venv .venv
-source .venv/bin/activate
-```
-Install all required packages:
-```
-pip install -r requirements.txt
-```
-
-#### 2. Start PostgreSQL + pgAdmin (Docker)
-
-From the project root:
+## 4) Phase 1 — Create Schema + Ingest Data
+- From the repository root:
 ```
 docker compose up -d
 ```
+- Check containers:
+```
+docker ps
+```
+- Run ingestion locally
+```
+python ingest_data.py
+python test.py
+```
+- pgAdmin URL + login
+```
+http://localhost:8080
 
-To stop everything:
+SELECT COUNT(*) FROM public.admission
+```
+
+## Phase 2 — dbt (Analytical Layer / Star Schema)
+- Create/Activate dbt environment
+```
+conda activate dbt_env
+```
+- Run dbt models
+```
+cd dbt_healthcare
+dbt run
+```
+- dbt debug (proves profile + connection)
+- dbt test (quality checks)
+
+## Phase 3 — Application Layer
+- Streamlit Dashboard
+```
+cd app
+streamlit run app.py
+```
+Open:
+
+- http://localhost:8501
+
+- Run (Docker Compose)
+```
+docker compose up -d --build
+```
+- Stop / Reset Project
 ```
 docker compose down -v
 ```
 
-Verify containers:
-```
-docker ps
-```
-
-You should see:
-
--> healthcare_db
-
--> gadmin_ui
-
-#### 3. Test Database Connection
-
-Run:
-```
-python test_connection.py
-```
-
-Expected:
-```
-Attempting to connect...
-Database connection successful: Connection OK
-```
-
-#### 4. Run the Data Ingestion Pipeline
-```
-python ingest_data.py
-```
-
-This script:
-
--> Loads raw dataset → Data/Healthcare.csv
-
--> Cleans, transforms, and normalizes the data
-
--> Inserts into PostgreSQL in FK-safe order:
-
-    1. neighborhood
-    2. patient
-    3. appointment
-
-Expected output:
-```
-Inserting neighborhoods...
-Inserting patients...
-Inserting appointments...
-Data ingestion completed successfully.
-```
-
-#### 5. Run Full Validation Tests
-```
-python test.py
-```
-
-This script checks:
--> Required tables exist
--> Row counts
--> Foreign key integrity
--> Sample analytical query
-
-Example output:
-```
-neighborhood: 81 rows
-patient: 62298 rows
-appointment: 110521 rows
-All appointments have a valid patient_id.
-```
-
-#### 6. View Database in pgAdmin
-
-Open:
-
-👉 http://localhost:8080
-
-Login using values from docker-compose:
-
-    -> Email: admin@admin.com
-
-    -> Password: admin123
-
-Run queries such as:
-```
-SELECT * FROM appointment LIMIT 10;
-```
-
-#### 7. Role-Based Access Control (RBAC)
-
-Run the security script:
-```
-docker exec -it healthcare_db psql -U admin -d healthcare_db -f /docker-entrypoint-initdb.d/security.sql
-```
-
-Created roles:
-##### analyst — Read-Only Role
-```
-    1. Can connect
-    2. Can read all tables
-    3. Cannot insert/update/delete
-```
-
-To test:
-```
-SET ROLE analyst;
-SELECT * FROM patient LIMIT 5;   -- Works
-INSERT INTO patient VALUES (...); -- Fails (read-only)
-```
-
-##### app_user — Read-Write Role
-```
-    1. Can connect
-    2. Can SELECT, INSERT, UPDATE, DELETE
-    3. Cannot create/drop tables
-```
-
-To test:
-```
-SET ROLE app_user;
-INSERT INTO neighborhood(name) VALUES ('TEST_AREA'); -- Works
-```
-
-Both roles are fully functional and validated in pgAdmin.
