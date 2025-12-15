@@ -87,21 +87,72 @@ dbt run
 - dbt test (quality checks)
 
 ## Phase 3 — Application Layer
-- Streamlit Dashboard
-```
-cd app
-streamlit run app.py
-```
-Open:
-
-- http://localhost:8501
-
-- Run (Docker Compose)
+- Step 1 — Start all services (Postgres + pgAdmin + Streamlit)
 ```
 docker compose up -d --build
 ```
-- Stop / Reset Project
+- step 2 - Confirm containers are running
 ```
-docker compose down -v
+docker ps
+```
+- step 3 - Open the services
+- Streamlit Dashboard: http://localhost:8501
+- pgAdmin: http://localhost:8080
+- Postgres: localhost:5432 (used internally by services + optional local access)
+
+- step 4 - Create a .env file in the repo root
+```
+DB_HOST=healthcare_db
+DB_PORT=5432
+DB_NAME=healthcare_db
+DB_USER=admin
+DB_PASSWORD=admin
+DB_SCHEMA=public
 ```
 
+- step 5 - Start Postgres + pgAdmin
+```
+docker compose up -d
+```
+
+- step 6 - Ingest data into OLTP tables
+```
+python ingest_data.py
+```
+
+- step 7 - Build OLAP views (dbt)
+```
+conda activate dbt_env
+cd dbt_healthcare
+dbt run
+```
+
+- step 8 - Start Streamlit
+```
+cd ..
+cd app
+streamlit run app.py
+```
+
+- Note: Steps 5–8 are only required if running ingestion/dbt outside Docker. For a full one-command startup, use docker compose up -d --build.
+
+Then open:
+#### http://localhost:8501
+
+## Screenshots & Demo Video
+- 1. Streamlit Dashboard - screenshots/Dashboard_overview.png
+- 2. Streamlit Dashboard – Interaction  - screenshots/Dashboard_filter_Interaction.png
+- 3. Docker Containers Running - screenshots/Docker_Running & Data_Ingestion.png
+- 4. pgAdmin Connected to Database - screenshots/Pageadmin_Connection.png
+
+- Demo video link: https://youtu.be/etqXDjIADYY
+
+## Stop / Reset the Project
+ - Stop containers
+ ```
+docker compose down
+```
+ - Full reset
+ ```
+docker compose down -v
+```

@@ -41,7 +41,8 @@ st.markdown("""
 # -----------------------------------------------------------------------------
 # 2. DATA LOADING (OPTIMIZED: CACHING + FULL JOINS + DATA FILLING)
 # -----------------------------------------------------------------------------
-DB_URL = "postgresql://postgres:Ramaseshu1%40@localhost:5432/postgres"
+# DB_URL = "postgresql://postgres:Ramaseshu1%40@localhost:5432/postgres"
+DB_URL = "postgresql+psycopg2://admin:admin123@localhost:5432/healthcare_db"
 
 @st.cache_resource
 def get_connection():
